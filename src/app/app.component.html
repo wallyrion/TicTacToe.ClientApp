@@ -1,16 +1,13 @@
 <div class="app">
-  <div class="header">
-    <a routerLink="/register">Register</a>
-    <a routerLink="/login">Login</a>
-  </div>
   <div class="content">
+    <app-header></app-header>
+    <div class="main">
+      <router-outlet></router-outlet>
 
+    </div>
   </div>
-  <mat-card>
-    <router-outlet>
 
-    </router-outlet>
-  </mat-card>
-
+  <footer class="footer">
+    Tic-tac-toe. Oleksii Korniienko. All rights reserved.
+  </footer>
 </div>
-

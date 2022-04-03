@@ -1,7 +1,7 @@
-import { LoginViewModel } from './../models/user/user';
+import { LoginViewModel } from '../../models/user/user';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { UserService } from '../services/user.service';
+import { UserService } from '../../services/user.service';
 import { Router, RouterLink } from '@angular/router';
 
 @Component({
