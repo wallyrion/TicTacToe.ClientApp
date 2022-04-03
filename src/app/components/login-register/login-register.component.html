@@ -19,7 +19,7 @@
             </div>
         </mat-card-content>
         <mat-card-actions class="actions">
-            <button type="button" (click)="onSubmit()" mat-stroked-button color="primary">
+            <button [disabled]="isLoading" type="button" (click)="onSubmit()" mat-stroked-button color="primary">
                 {{isRegistration ? 'Register' : 'Login'}}
              </button>
         </mat-card-actions>

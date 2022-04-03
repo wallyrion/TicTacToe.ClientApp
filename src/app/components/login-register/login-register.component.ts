@@ -10,6 +10,8 @@ import { LoginViewModel } from 'src/app/models/user/user';
 export class LoginRegisterComponent implements OnInit {
   @Output() submit = new EventEmitter<LoginViewModel>();
   @Input() public isRegistration = false;
+  @Input() public isLoading = false;
+
   public form!: FormGroup;
 
   constructor(

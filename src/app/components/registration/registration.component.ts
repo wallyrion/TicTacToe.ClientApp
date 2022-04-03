@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { Router, RouterLink } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-registration',
@@ -11,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./registration.component.scss'],
 })
 export class RegistrationComponent implements OnInit {
-
+  public isLoading = false;
   constructor(
     private readonly _userService: UserService,
     private readonly _router: Router,
@@ -23,7 +24,14 @@ export class RegistrationComponent implements OnInit {
   }
 
   public onSubmit(model: LoginViewModel) {
+    this.isLoading = true;
     this._userService.register(model)
+      .pipe(
+        tap({
+          next: () => this.isLoading = false,
+          error: () => this.isLoading = false
+        })
+      )
       .subscribe({
         next: () => {
           this._toastr.success('Registration was successfully completed')
