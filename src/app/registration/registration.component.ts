@@ -1,5 +1,8 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { LoginViewModel } from './../models/user/user';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { UserService } from '../services/user.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
@@ -10,7 +13,9 @@ export class RegistrationComponent implements OnInit {
   public form!: FormGroup;
   
   constructor(
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private readonly _userService: UserService,
+    private readonly _router: Router
   ) { }
 
   ngOnInit(): void {
@@ -21,7 +26,12 @@ export class RegistrationComponent implements OnInit {
   }
 
   public onSubmit(){
-    console.log(this.form);
+    const loginModel = this.form.value as LoginViewModel;
+    this._userService.register(loginModel)
+      .subscribe(x => {
+        this._router.navigate(['game']);
+      })
+    
   }
 
 }
