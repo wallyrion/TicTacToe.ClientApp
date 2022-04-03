@@ -1,0 +1,26 @@
+.field {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+
+    &__cell {
+        &:hover {
+            background-color: rgba(58, 186, 23, 0.859);
+        }
+        
+        cursor: pointer;
+        border: 1px solid black;
+        background-color: beige;
+        width: 32.9%;
+        padding-bottom: 32%; /* Same as width, sets height */
+        position: relative;
+        .mark {
+            position: absolute;
+            margin: 65px 45px;
+            font-size: 100px;
+        }
+    }
+}

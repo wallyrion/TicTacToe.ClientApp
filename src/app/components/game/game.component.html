@@ -1,1 +1,14 @@
 <p>game works!</p>
+
+<div class="field">
+    <div *ngFor="let item of field" 
+        (click)="onCheckMark(item)"
+        [ngClass]="item.mark ? 'marked' :'' "
+        class="field__cell" >
+        <div class="mark">
+            <span *ngIf="item.mark">
+                {{item.mark == mark.X ? 'X' : '0'}}
+            </span>
+        </div>
+    </div>
+</div>
