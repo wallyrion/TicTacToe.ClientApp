@@ -7,7 +7,7 @@ import { tap } from 'rxjs';
   providedIn: 'root'
 })
 export class UserService {
-  private readonly baseUrl = 'https://localhost:7270/User';
+  private readonly baseUrl = 'https://localhost:44389/User';
   public user: UserModel | undefined;
 
   set currentUser(user: UserModel | undefined) {

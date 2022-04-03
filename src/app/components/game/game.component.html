@@ -1,8 +1,8 @@
 <p>game works!</p>
 
 <div class="field">
-    <div *ngFor="let item of field" 
-        (click)="onCheckMark(item)"
+    <div *ngFor="let item of field; let i = index" 
+        (click)="onCheckMark(item, i)"
         [ngClass]="item.mark ? 'marked' :'' "
         class="field__cell" >
         <div class="mark">
