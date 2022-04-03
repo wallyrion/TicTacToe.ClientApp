@@ -20,6 +20,7 @@ import { UserService } from './services/user.service';
 import { HttpClientModule } from '@angular/common/http';
 import { GameComponent } from './components/game/game.component';
 import { HeaderComponent } from './components/header/header.component';
+import { LoginRegisterComponent } from './components/login-register/login-register.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { HeaderComponent } from './components/header/header.component';
     RegistrationComponent,
     LoginComponent,
     GameComponent,
-    HeaderComponent
+    HeaderComponent,
+    LoginRegisterComponent
   ],
   imports: [
     MatCardModule,

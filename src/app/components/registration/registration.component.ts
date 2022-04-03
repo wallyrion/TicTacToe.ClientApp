@@ -11,27 +11,22 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./registration.component.scss'],
 })
 export class RegistrationComponent implements OnInit {
-  public form!: FormGroup;
 
   constructor(
-    private _fb: FormBuilder,
     private readonly _userService: UserService,
     private readonly _router: Router,
     private readonly _toastr: ToastrService
   ) { }
 
   ngOnInit(): void {
-    this.form = this._fb.group({
-      email: [''],
-      password: [''],
-    });
+    //throw new Error('Method not implemented.');
   }
 
-  public onSubmit() {
-    const loginModel = this.form.value as LoginViewModel;
-    this._userService.register(loginModel)
+  public onSubmit(model: LoginViewModel) {
+    debugger;
+    this._userService.register(model)
       .subscribe({
-        next: x => {
+        next: () => {
           this._toastr.success('Registration was successfully completed')
           this._router.navigate(['game']);
         },

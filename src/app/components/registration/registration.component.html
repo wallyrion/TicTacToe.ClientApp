@@ -1,25 +1,3 @@
-<mat-card class="card">
-    <form [formGroup]="form">
-        <mat-card-header><h1>Registration</h1></mat-card-header>
-        <mat-card-content>
-            <div>
-                <mat-form-field class="field" appearance="legacy">
-                    <mat-label>Email</mat-label>
-                    <mat-error>Field is requred</mat-error>
-                    <input formControlName="email" required matInput placeholder="Email">
-                </mat-form-field>
-            </div>
+<app-login-register (submit)="onSubmit($event)">
 
-            <div>
-                <mat-form-field class="field" appearance="legacy">
-                    <mat-label>Password</mat-label>
-                    <mat-error>Field is requred</mat-error>
-                    <input formControlName="password" required type="password" matInput placeholder="Password">
-                </mat-form-field>
-            </div>
-        </mat-card-content>
-        <mat-card-actions class="actions">
-            <button (click)="onSubmit()" mat-stroked-button color="primary">Register</button>
-        </mat-card-actions>
-    </form>
-</mat-card>
+</app-login-register>
