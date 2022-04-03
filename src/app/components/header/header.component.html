@@ -1,4 +1,20 @@
 <div class='header'>
-    <a routerLink="/register">Register</a>
-    <a routerLink="/login">Login</a>
+    <div class="header__login" *ngIf="!user">
+        <a routerLink="/register">Register</a>
+        <a routerLink="/login">Login</a>
+    </div>
+    <div class="header__content content" *ngIf="user">
+        <div>
+            Start
+        </div>
+        <div class="right">
+            <div>
+                Hello, {{user.email}}
+            </div>
+            <div>
+               <a class="right__logout" (click)="onLogout()">Log out</a>
+            </div>
+        </div>
+        
+    </div>
 </div>

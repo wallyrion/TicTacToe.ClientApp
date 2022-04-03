@@ -23,7 +23,6 @@ export class RegistrationComponent implements OnInit {
   }
 
   public onSubmit(model: LoginViewModel) {
-    debugger;
     this._userService.register(model)
       .subscribe({
         next: () => {
@@ -32,7 +31,6 @@ export class RegistrationComponent implements OnInit {
         },
         error: () => this._toastr.error('Error during registration')
       })
-
   }
 
 }

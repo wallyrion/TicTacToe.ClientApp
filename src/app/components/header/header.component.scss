@@ -2,8 +2,34 @@
     background-color: black;
     height: 30px;
     color: white;
+    padding-left: 30px;
+    padding-right: 30px;
     display: flex;
-    padding-left: 20px;
+    &__login {
+        display: flex;
+        align-items: center;
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+
+        .right {
+            display: flex;
+            align-items: center;
+            &__logout {
+                cursor: pointer;
+                &:hover {
+                    font-weight: bold;
+                }
+            }
+            div {
+                padding-right: 10px;
+            }
+        }
+    }
 
     a {
         margin: 5px;

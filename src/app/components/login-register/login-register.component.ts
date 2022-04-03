@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { LoginViewModel } from 'src/app/models/user/user';
 
@@ -9,7 +9,7 @@ import { LoginViewModel } from 'src/app/models/user/user';
 })
 export class LoginRegisterComponent implements OnInit {
   @Output() submit = new EventEmitter<LoginViewModel>();
-
+  @Input() public isRegistration = false;
   public form!: FormGroup;
 
   constructor(

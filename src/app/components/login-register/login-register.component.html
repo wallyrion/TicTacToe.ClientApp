@@ -1,6 +1,6 @@
 <mat-card class="card">
     <form [formGroup]="form">
-        <mat-card-header><h1>Registration</h1></mat-card-header>
+        <mat-card-header><h1>{{isRegistration ? 'Registration' : 'Login'}}</h1></mat-card-header>
         <mat-card-content>
             <div>
                 <mat-form-field class="field" appearance="legacy">
@@ -19,7 +19,9 @@
             </div>
         </mat-card-content>
         <mat-card-actions class="actions">
-            <button type="button" (click)="onSubmit()" mat-stroked-button color="primary">Register</button>
+            <button type="button" (click)="onSubmit()" mat-stroked-button color="primary">
+                {{isRegistration ? 'Register' : 'Login'}}
+             </button>
         </mat-card-actions>
     </form>
 </mat-card>
