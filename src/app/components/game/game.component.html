@@ -1,10 +1,21 @@
 <p>game works!</p>
 
-<div class="field">
+<div>
+    Start new game
+    <mat-form-field class="field" >
+        <mat-label>Enter your opponent's email</mat-label>
+        <!-- <mat-error>Field is requred</mat-error> -->
+        <input placeholder="Email" required matInput>
+    </mat-form-field>
+    <button mat-raised-button >Invite </button>
+</div>
+
+
+<div *ngIf="isGameStarted" class="game-field">
     <div *ngFor="let item of field; let i = index" 
         (click)="onCheckMark(item, i)"
         [ngClass]="item.mark ? 'marked' :'' "
-        class="field__cell" >
+        class="cell" >
         <div class="mark">
             <span *ngIf="item.mark">
                 {{item.mark == mark.X ? 'X' : '0'}}

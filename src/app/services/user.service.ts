@@ -2,12 +2,13 @@ import { LoginViewModel, UserModel } from './../models/user/user';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
+import { BASE_URL } from 'src/constants';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private readonly baseUrl = 'https://localhost:44389/User';
+  private readonly baseUrl = `${BASE_URL}/User`;
   public user: UserModel | undefined;
 
   set currentUser(user: UserModel | undefined) {

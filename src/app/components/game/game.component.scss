@@ -1,4 +1,4 @@
-.field {
+.game-field {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -6,7 +6,7 @@
     height: 500px;
     margin: 0 auto;
 
-    &__cell {
+    .cell {
         &:hover {
             background-color: rgba(58, 186, 23, 0.859);
         }
