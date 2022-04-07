@@ -1,3 +1,40 @@
+.invitation {
+    text-align: center;
+    button {
+        margin: 10px;
+    }
+    .field {
+        width: 300px;
+    }
+}
+
+.turn-label {
+    &.outcome {
+        font-size: 30px;
+        &.win {
+            color: green;
+        }
+        &.draw {
+            color: black;
+        }
+        &.lose {
+            color: red;
+        }
+    }
+
+    margin: 15px;
+    text-align: center;
+    font-weight: bold;
+    &.in-running {
+        &.my-turn {
+            color: green;
+        }
+        &.opponent-turn {
+            color: red;
+        }
+    }
+}
+
 .game-field {
     display: flex;
     flex-wrap: wrap;
@@ -7,16 +44,28 @@
     margin: 0 auto;
 
     .cell {
-        &:hover {
-            background-color: rgba(58, 186, 23, 0.859);
+        &.in-running{
+            &:not(.opponent-turn) {
+                &:hover {
+                    background-color: rgba(58, 186, 23, 0.859);
+                }
+                cursor: pointer;
+            }
         }
         
-        cursor: pointer;
+        &.win-cell {
+            color: green;
+        }
+        &.lose-cell {
+            color: red;
+        }
+
         border: 1px solid black;
         background-color: beige;
         width: 32.9%;
         padding-bottom: 32%; /* Same as width, sets height */
         position: relative;
+
         .mark {
             position: absolute;
             margin: 65px 45px;

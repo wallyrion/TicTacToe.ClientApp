@@ -16,6 +16,10 @@ export class UserService {
     localStorage.setItem('current-user', JSON.stringify(user))
   }
 
+  get currentUser(): UserModel {
+    return this.user as any;
+  }
+
   constructor(
     private http: HttpClient,
   ) {

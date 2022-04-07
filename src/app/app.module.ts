@@ -21,6 +21,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { GameComponent } from './components/game/game.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginRegisterComponent } from './components/login-register/login-register.component';
+import { GameService } from './services/game.service';
+import { ConnectionService } from './services/connection.service';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -40,8 +43,7 @@ import { LoginRegisterComponent } from './components/login-register/login-regist
     HttpClientModule,
     ToastrModule.forRoot(),
 
-    BrowserModule,
-    BrowserAnimationsModule,
+    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -59,7 +61,9 @@ import { LoginRegisterComponent } from './components/login-register/login-regist
     BrowserAnimationsModule
   ],
   providers: [
-    UserService
+    UserService,
+    GameService,
+    ConnectionService
   ],
   bootstrap: [AppComponent]
 })
