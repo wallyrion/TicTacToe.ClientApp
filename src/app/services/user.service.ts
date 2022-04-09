@@ -28,6 +28,10 @@ export class UserService {
     return this.user as any;
   }
 
+  get accessToken(): string | null {
+    return localStorage.getItem('access-token');
+  }
+
   constructor(
     private http: HttpClient,
   ) {

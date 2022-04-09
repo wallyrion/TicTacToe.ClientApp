@@ -17,13 +17,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { UserService } from './services/user.service';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { GameComponent } from './components/game/game.component';
 import { HeaderComponent } from './components/header/header.component';
 import { LoginRegisterComponent } from './components/login-register/login-register.component';
 import { GameService } from './services/game.service';
 import { ConnectionService } from './services/connection.service';
 import { CommonModule } from '@angular/common';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -63,7 +64,12 @@ import { CommonModule } from '@angular/common';
   providers: [
     UserService,
     GameService,
-    ConnectionService
+    ConnectionService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
