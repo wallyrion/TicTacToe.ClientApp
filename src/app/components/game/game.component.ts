@@ -8,17 +8,18 @@ import { UserService } from 'src/app/services/user.service';
 import { GameEvent, GameInvitation, GameObject, GameOutcome, Mark, Outcome } from 'src/app/models/game';
 import { ToastrService } from 'ngx-toastr';
 import { calculateWin } from 'src/app/helpers/game-logic';
+import { ConnectionService } from 'src/app/services/connection.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
+  providers: [ConnectionService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit {
-  private _hubConnection: HubConnection | undefined;
   public opponentEmail: string | undefined;
-  sessionId = Guid.create();
   public isGameStarted = false;
   public invitation: GameInvitation | undefined;
   public mark = Mark;
@@ -33,53 +34,37 @@ export class GameComponent implements OnInit {
     private _gameService: GameService,
     private _userService: UserService = null!,
     private _toastr: ToastrService,
+    private readonly _connectionService: ConnectionService
   ) { }
 
   ngOnInit(): void {
-    this._hubConnection = new signalR.HubConnectionBuilder()
-      .configureLogging(signalR.LogLevel.Information)
-      .withUrl(`${BASE_URL}/game`)
-      .build();
+    this._connectionService.initializeHub();
+    this._connectionService.send$
+      .subscribe(data => {
+        this.isCurrentUserTurn = !this.isCurrentUserTurn;
+        const index = +data.index;
+        let temp = [...this.field];
+        this.field = [];
+        temp[index].mark = this.currentUserMark === Mark.X ? Mark.O : Mark.X;
+        this.field = [...temp]
+        console.log(this.field);
+        this.outcome = data.outcome
+        this._cdr.detectChanges();
+      })
 
-    console.log(this._hubConnection);
-
-    this._hubConnection.start().catch(err => console.error(err.toString()));
-
-    this._hubConnection.on('Send', (data: any) => {
-      console.log('change turn', data);
-      let gameEvent = JSON.parse(data) as GameEvent;
-      if (this.sessionId.toString() == gameEvent.sessionId) {
-        return;
-      }
-
-      this.isCurrentUserTurn = !this.isCurrentUserTurn;
-      const index = +gameEvent.index;
-      let temp = [...this.field];
-      this.field = [];
-      temp[index].mark = this.currentUserMark === Mark.X ? Mark.O : Mark.X;
-      this.field = [...temp]
-      console.log(this.field);
-      this.outcome = gameEvent.outcome
-      this._cdr.detectChanges();
-    });
-
-    this._hubConnection.on('invite', (data: GameInvitation) => {
-      if (data.user2Email !== this._userService.currentUser.email) {
-        return;
-      }
-      console.log(data);
+    this._connectionService.invite$.subscribe(data => {
       this.invitation = data;
       this._cdr.detectChanges();
-    });
+    })
 
-    this._hubConnection.on('accepted', (gameId: string) => {
-      if (this.invitation?.gameId !== gameId) {
-        return;
-      }
 
-      this.startGame(this.invitation);
-      this._cdr.detectChanges();
-    });
+    this._connectionService.accept$
+      .pipe(filter(gameId => gameId === this.invitation?.gameId))
+      .subscribe(() => {
+        this.startGame(this.invitation);
+        this._cdr.detectChanges();
+      })
+    
   }
 
   public onCheckMark(item: GameObject, index: number) {
@@ -93,20 +78,12 @@ export class GameComponent implements OnInit {
     this.field = [...this.field]
     const res = calculateWin(this.field, this.currentUserMark)
     if (res) {
-      this.outcome =  { type: GameOutcome.Win, indexes: res, winnerId: this._userService.currentUser.id }
-    } else if (!res && this.field.every(x => x.mark !== Mark.NA)){
-      this.outcome = {type: GameOutcome.Draw }
+      this.outcome = { type: GameOutcome.Win, indexes: res, winnerId: this._userService.currentUser.id }
+    } else if (!res && this.field.every(x => x.mark !== Mark.NA)) {
+      this.outcome = { type: GameOutcome.Draw }
     }
-    
-    let ev = {
-      index: index.toString(),
-      sessionId: this.sessionId.toString(),
-      outcome: this.outcome
-    } as GameEvent
-    if (this._hubConnection) {
-      this._hubConnection.invoke('Send', JSON.stringify(ev));
-    }
-    
+
+    this._connectionService.sendGameEvent(index, this.outcome);
     this._cdr.detectChanges();
   }
 
@@ -155,7 +132,7 @@ export class GameComponent implements OnInit {
     return list;
   }
 
-  public getOutcomeFromEnum(outcome: Outcome) {
+  public getOutcomeFromEnum(outcome: Outcome) : 'draw' | 'win' | 'lose' {
     if (outcome.type === GameOutcome.Draw) {
       return 'draw'
     }
