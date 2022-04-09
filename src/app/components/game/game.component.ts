@@ -1,11 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, Output } from '@angular/core';
-import { HubConnection } from '@microsoft/signalr';
-import * as signalR from '@microsoft/signalr';
-import { Guid } from 'guid-typescript';
-import { BASE_URL } from 'src/constants';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { GameService } from 'src/app/services/game.service';
 import { UserService } from 'src/app/services/user.service';
-import { GameEvent, GameInvitation, GameObject, GameOutcome, Mark, Outcome } from 'src/app/models/game';
+import { GameInvitation, GameObject, GameOutcome, Mark, Outcome } from 'src/app/models/game';
 import { ToastrService } from 'ngx-toastr';
 import { calculateWin } from 'src/app/helpers/game-logic';
 import { ConnectionService } from 'src/app/services/connection.service';
@@ -73,7 +69,6 @@ export class GameComponent implements OnInit {
     }
 
     this.isCurrentUserTurn = !this.isCurrentUserTurn;
-    // item.mark = this.currentUserMark;
     this.field[index].mark = this.currentUserMark;
     this.field = [...this.field]
     const res = calculateWin(this.field, this.currentUserMark)

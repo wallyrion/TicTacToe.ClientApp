@@ -1,4 +1,4 @@
-import { LoginViewModel, UserModel } from './../models/user/user';
+import { LoginViewModel, TokenResponse, UserModel } from './../models/user/user';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
@@ -9,11 +9,19 @@ import { BASE_URL } from 'src/constants';
 })
 export class UserService {
   private readonly baseUrl = `${BASE_URL}/User`;
-  public user: UserModel | undefined;
+  private user: UserModel | undefined;
 
-  set currentUser(user: UserModel | undefined) {
-    this.user = user;
-    localStorage.setItem('current-user', JSON.stringify(user))
+  set currentUserToken(response: TokenResponse | undefined) {
+    if (!response) {
+      this.user = undefined;
+      localStorage.clear();
+      return;
+    }
+
+    this.user = response.userViewModel;
+    localStorage.setItem('current-user', JSON.stringify(response.userViewModel))
+    localStorage.setItem('access-token', response.accessToken)
+    localStorage.setItem('refresh-token', response.refreshToken)
   }
 
   get currentUser(): UserModel {
@@ -30,21 +38,20 @@ export class UserService {
     }
   }
 
-  register(user: LoginViewModel) {
-    return this.http.post<UserModel>(`${this.baseUrl}/register`, user)
+  register(response: LoginViewModel) {
+    return this.http.post<TokenResponse>(`${this.baseUrl}/register`, response)
       .pipe(tap(user => {
-        this.currentUser = user;
+        this.currentUserToken = user;
       }))
 
   }
 
-  login(user: LoginViewModel) {
-    return this.http.post<UserModel>(`${this.baseUrl}/login`, user)
-      .pipe(tap(user => this.currentUser = user))
+  login(response: LoginViewModel) {
+    return this.http.post<TokenResponse>(`${this.baseUrl}/login`, response)
+      .pipe(tap(user => this.currentUserToken = user))
   }
 
   logout() {
-    this.user = undefined;
-    localStorage.removeItem('current-user');
+    this.currentUserToken = undefined;
   }
 }

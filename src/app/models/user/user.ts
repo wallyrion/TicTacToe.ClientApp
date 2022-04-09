@@ -8,3 +8,9 @@ export interface UserModel {
     name: string;
     id: string;
 }
+
+export interface TokenResponse {
+    userViewModel: UserModel;
+    accessToken: string;
+    refreshToken: string;
+}

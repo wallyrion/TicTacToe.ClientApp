@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   get user(): UserModel | undefined {
-    return this.userService.user;
+    return this.userService.currentUser;
   }
 
   ngOnInit(): void {
