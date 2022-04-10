@@ -19,7 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(this.addAuthToken(request))
       .pipe(
         catchError((requestError: HttpErrorResponse) => {
-          if (!this.userService.currentUserId) {
+          if (!this.userService.cachedUserId) {
             return throwError(() => new Error(requestError.message));
           }
           if (requestError && requestError.status === 401) {
@@ -36,7 +36,7 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 
   addAuthToken(request: HttpRequest<any>, accessToken: string | undefined = undefined) {
-    const token = accessToken || this.userService.accessToken;
+    const token = accessToken || this.userService.cachedAccessToken;
 
     if (!token) {
       return request;

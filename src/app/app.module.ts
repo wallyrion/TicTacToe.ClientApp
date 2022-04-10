@@ -25,6 +25,7 @@ import { GameService } from './services/game.service';
 import { ConnectionService } from './services/connection.service';
 import { CommonModule } from '@angular/common';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { NotFoundComponent } from './components/core/not-found/not-found.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { AuthInterceptor } from './interceptors/auth.interceptor';
     LoginComponent,
     GameComponent,
     HeaderComponent,
-    LoginRegisterComponent
+    LoginRegisterComponent,
+    NotFoundComponent
   ],
   imports: [
     MatCardModule,

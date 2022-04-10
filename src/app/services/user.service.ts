@@ -1,7 +1,7 @@
 import { LoginViewModel, RefreshTokenRequest, RefreshTokenResponse, TokenResponse, UserModel } from './../models/user/user';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs';
+import { finalize, Subject, tap } from 'rxjs';
 import { BASE_URL } from 'src/constants';
 
 @Injectable({
@@ -10,7 +10,8 @@ import { BASE_URL } from 'src/constants';
 export class UserService {
   private readonly baseUrl = `${BASE_URL}/User`;
   private user: UserModel | undefined;
-
+  public isUserLoading = false;
+  public user$ = new Subject<UserModel | undefined>();
   set currentUserToken(response: TokenResponse | undefined) {
     if (!response) {
       this.user = undefined;
@@ -28,15 +29,15 @@ export class UserService {
     return this.user as any;
   }
 
-  get accessToken(): string | null {
+  get cachedAccessToken(): string | null {
     return localStorage.getItem('access-token');
   }
 
-  get refreshToken(): string | null {
+  get cachedRefreshToken(): string | null {
     return localStorage.getItem('refresh-token');
   }
 
-  get currentUserId(): string | null {
+  get cachedUserId(): string | null {
     return localStorage.getItem('current-user-id');
   }
 
@@ -60,7 +61,7 @@ export class UserService {
 
   refreshTokens() {
     return this.http.post<RefreshTokenResponse>(
-      `${this.baseUrl}/refresh_token`, {refreshToken: this.refreshToken, userId: this.currentUserId} as RefreshTokenRequest)
+      `${this.baseUrl}/refresh_token`, {refreshToken: this.cachedRefreshToken, userId: this.cachedUserId} as RefreshTokenRequest)
       .pipe(
         tap((tokens: RefreshTokenResponse) => {
           localStorage.setItem('access-token', tokens.accessToken)
@@ -71,9 +72,19 @@ export class UserService {
 
 
   getCurrentUser() {
+    this.isUserLoading = true;
     return this.http.get<UserModel>(`${this.baseUrl}/my-info`)
-    .pipe(tap(user => {
-      this.user = user;
+    .pipe(tap({
+      next: (user) => {
+        this.user = user;
+        this.user$.next(user);
+      },
+      error: (err) => {
+        this.user$.next(undefined)
+      }
+    }),
+    finalize(() => {
+      this.isUserLoading = false;
     }))
   }
 

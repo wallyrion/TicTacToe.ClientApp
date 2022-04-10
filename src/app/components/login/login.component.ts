@@ -27,15 +27,14 @@ export class LoginComponent implements OnInit {
     this._userService.login(model)
       .pipe(
         tap({
-          next: () => this.isLoading = false,
-          error: () => this.isLoading = false
+          finalize: () => this.isLoading = false,
         })
       )
       .subscribe({
         next: (user) => {
           this._userService
           this._toastr.success('Logged in successfully')
-          this._router.navigate(['game']);
+          //this._router.navigate(['game']);
         },
         error: () => this._toastr.error('Error during authorization')
       })
