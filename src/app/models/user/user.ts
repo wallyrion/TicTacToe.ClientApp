@@ -7,6 +7,7 @@ export interface UserModel {
     email: string;
     name: string;
     id: string;
+    roles: UserRole[]
 }
 
 export interface TokenResponse {
@@ -23,4 +24,8 @@ export interface RefreshTokenResponse {
 export interface RefreshTokenRequest {
     userId: string;
     refreshToken: string;
+}
+
+export enum UserRole {
+    
 }

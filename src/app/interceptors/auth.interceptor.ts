@@ -19,7 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(this.addAuthToken(request))
       .pipe(
         catchError((requestError: HttpErrorResponse) => {
-          if (!this.userService.currentUser?.id) {
+          if (!this.userService.currentUserId) {
             return throwError(() => new Error(requestError.message));
           }
           if (requestError && requestError.status === 401) {

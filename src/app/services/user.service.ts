@@ -19,7 +19,7 @@ export class UserService {
     }
 
     this.user = response.userViewModel;
-    localStorage.setItem('current-user', JSON.stringify(response.userViewModel))
+    localStorage.setItem('current-user-id', response.userViewModel.id)
     localStorage.setItem('access-token', response.accessToken)
     localStorage.setItem('refresh-token', response.refreshToken)
   }
@@ -36,14 +36,13 @@ export class UserService {
     return localStorage.getItem('refresh-token');
   }
 
+  get currentUserId(): string | null {
+    return localStorage.getItem('current-user-id');
+  }
+
   constructor(
     private http: HttpClient,
   ) {
-    const userJson = localStorage.getItem('current-user');
-
-    if (userJson) {
-      this.user = JSON.parse(userJson);
-    }
   }
 
   register(response: LoginViewModel) {
@@ -61,13 +60,25 @@ export class UserService {
 
   refreshTokens() {
     return this.http.post<RefreshTokenResponse>(
-      `${this.baseUrl}/refresh_token`, {refreshToken: this.refreshToken, userId: this.currentUser.id} as RefreshTokenRequest)
+      `${this.baseUrl}/refresh_token`, {refreshToken: this.refreshToken, userId: this.currentUserId} as RefreshTokenRequest)
       .pipe(
         tap((tokens: RefreshTokenResponse) => {
           localStorage.setItem('access-token', tokens.accessToken)
           localStorage.setItem('refresh-token', tokens.refreshToken)
         })
       )
+  }
+
+
+  getCurrentUser() {
+    return this.http.get<UserModel>(`${this.baseUrl}/my-info`)
+    .pipe(tap(user => {
+      this.user = user;
+    }))
+  }
+
+  initialize() {
+    this.getCurrentUser().subscribe()
   }
 
   logout() {
