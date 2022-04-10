@@ -34,7 +34,7 @@ export class LoginComponent implements OnInit {
         next: (user) => {
           this._userService
           this._toastr.success('Logged in successfully')
-          //this._router.navigate(['game']);
+          this._router.navigate(['game']);
         },
         error: () => this._toastr.error('Error during authorization')
       })

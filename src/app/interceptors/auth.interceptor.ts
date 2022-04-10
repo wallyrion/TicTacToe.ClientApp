@@ -8,11 +8,15 @@ import {
 } from '@angular/common/http';
 import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { UserService } from '../services/user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  constructor(private userService: UserService) { }
+  constructor(
+    private userService: UserService,
+    private toastr: ToastrService
+    ) { }
 
   intercept(request: HttpRequest<any>,
     next: HttpHandler): Observable<HttpEvent<any>> | Observable<any> {
@@ -20,7 +24,11 @@ export class AuthInterceptor implements HttpInterceptor {
       .pipe(
         catchError((requestError: HttpErrorResponse) => {
           if (!this.userService.cachedUserId) {
-            return throwError(() => new Error(requestError.message));
+            return throwError(() => {
+              console.log(requestError)
+              this.toastr.error(requestError.message)
+              new Error(requestError.message)
+            });
           }
           if (requestError && requestError.status === 401) {
             return this.userService.refreshTokens()
@@ -29,7 +37,10 @@ export class AuthInterceptor implements HttpInterceptor {
               )
           }
 
-          return throwError(() => new Error(requestError.message));
+          return throwError(() => {
+            this.toastr.error(requestError.message)
+            new Error(requestError.message)
+          });
         })
       );
 
