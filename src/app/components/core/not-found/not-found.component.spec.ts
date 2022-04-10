@@ -8,9 +8,9 @@ describe('NotFoundComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ NotFoundComponent ]
+      declarations: [NotFoundComponent]
     })
-    .compileComponents();
+      .compileComponents();
   });
 
   beforeEach(() => {
@@ -21,5 +21,11 @@ describe('NotFoundComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have <h1> with text "not found"', () => {
+    const bannerElement: HTMLElement = fixture.nativeElement;
+    const h1 = bannerElement.querySelector('h1')!;
+    expect(h1.textContent).toEqual('Page not found');
   });
 });
