@@ -10,6 +10,14 @@ import { catchError, Observable, switchMap, throwError } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { ToastrService } from 'ngx-toastr';
 
+class ErrorDetails {
+  message: string | undefined;
+}
+
+class HttpError extends HttpErrorResponse {
+    override error: ErrorDetails = null!
+}
+
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
@@ -22,12 +30,12 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler): Observable<HttpEvent<any>> | Observable<any> {
     return next.handle(this.addAuthToken(request))
       .pipe(
-        catchError((requestError: HttpErrorResponse) => {
+        catchError((requestError: HttpError) => {
           if (!this.userService.cachedUserId) {
             return throwError(() => {
               console.log(requestError)
-              this.toastr.error(requestError.message)
-              new Error(requestError.message)
+              this.toastr.error(requestError.error.message)
+              new Error(requestError.error.message)
             });
           }
           if (requestError && requestError.status === 401) {
@@ -38,8 +46,8 @@ export class AuthInterceptor implements HttpInterceptor {
           }
 
           return throwError(() => {
-            this.toastr.error(requestError.message)
-            new Error(requestError.message)
+            this.toastr.error(requestError.error.message)
+            new Error(requestError.error.message)
           });
         })
       );
