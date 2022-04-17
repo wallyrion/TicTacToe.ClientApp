@@ -1,4 +1,4 @@
-import { LoginViewModel, RefreshTokenRequest, RefreshTokenResponse, TokenResponse, UserModel } from './../models/user/user';
+import { LoginViewModel, RefreshTokenRequest, RefreshTokenResponse, AuthResponse, UserModel } from './../models/user/user';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { finalize, Subject, tap } from 'rxjs';
@@ -12,7 +12,7 @@ export class UserService {
   private user: UserModel | undefined;
   public isUserLoading = false;
   public user$ = new Subject<UserModel | undefined>();
-  set currentUserToken(response: TokenResponse | undefined) {
+  set currentUserToken(response: AuthResponse | undefined) {
     if (!response) {
       this.user = undefined;
       localStorage.clear();
@@ -47,7 +47,7 @@ export class UserService {
   }
 
   register(response: LoginViewModel) {
-    return this.http.post<TokenResponse>(`${this.baseUrl}/register`, response)
+    return this.http.post<AuthResponse>(`${this.baseUrl}/register`, response)
       .pipe(tap(user => {
         this.currentUserToken = user;
       }))
@@ -55,7 +55,7 @@ export class UserService {
   }
 
   login(response: LoginViewModel) {
-    return this.http.post<TokenResponse>(`${this.baseUrl}/login`, response)
+    return this.http.post<AuthResponse>(`${this.baseUrl}/login`, response)
       .pipe(tap(user => this.currentUserToken = user))
   }
 

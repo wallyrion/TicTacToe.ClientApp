@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { GameEvent, GameInvitation, Outcome } from '../models/game';
 import { Guid } from 'guid-typescript';
 import { UserService } from './user.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ConnectionService {
@@ -15,16 +16,40 @@ export class ConnectionService {
   public invite$ = new Subject<GameInvitation>()
   public accept$ = new Subject<string>()
   constructor(
-    private readonly _userService: UserService
+    private readonly _userService: UserService,
+    private readonly _toastr: ToastrService,
   ) { }
 
   initializeHub(): void {
     this._hubConnection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
-      .withUrl(`${BASE_URL}/game`)
-      .build();
+      .withAutomaticReconnect()
+      .withUrl(`${BASE_URL}/hubs/game`, {
+        headers: {},
+        accessTokenFactory: () => {
+          console.log('current token', this._userService.cachedAccessToken as string);
+          return this._userService.cachedAccessToken as string;
+        }
+      })
+      .build()
+      ;
 
-    this._hubConnection.start().catch(err => console.error(err.toString()));
+      console.log('build', this._hubConnection?.connectionId);
+
+    this._hubConnection.onreconnecting(() => {
+      console.log('on onreconnecting', this._hubConnection?.connectionId);
+    })
+
+    this._hubConnection.onreconnected(() => {
+      console.log('on onreconnected', this._hubConnection?.connectionId);
+     // console.log('on onreconnected', this._hubConnection?.stream(``))
+    })
+
+    this._hubConnection.keepAliveIntervalInMilliseconds = 1000
+
+    this._hubConnection.start().then(res => {
+      console.log('started', res, this._hubConnection?.connectionId)
+    }).catch(err => console.error(err.toString()));
 
     this._hubConnection.on('Send', (data: any) => {
       const gameEvent = JSON.parse(data) as GameEvent;
@@ -36,10 +61,12 @@ export class ConnectionService {
     });
 
     this._hubConnection.on('invite', (data: GameInvitation) => {
-      if (data.opponentId !== this._userService.currentUser.id) {
+      if (data.user2Id !== this._userService.currentUser.id) {
         return;
       }
       
+      this._toastr.show(`${data.user1Email} invited you to the game.`, '', {
+      })
       this.invite$.next(data);
     });
 
@@ -50,8 +77,7 @@ export class ConnectionService {
 
   public sendGameEvent(index: number, outcome: Outcome | undefined, gameId: string) {
     if (!this._hubConnection) {
-      console.error('_hubConnection is undefined')
-      return;
+      throw new Error('_hubConnection is undefined')
     }
 
     let ev = {

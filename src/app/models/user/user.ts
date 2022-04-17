@@ -10,7 +10,7 @@ export interface UserModel {
     roles: UserRole[]
 }
 
-export interface TokenResponse {
+export interface AuthResponse {
     userViewModel: UserModel;
     accessToken: string;
     refreshToken: string;

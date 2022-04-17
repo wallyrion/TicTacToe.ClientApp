@@ -8,7 +8,7 @@
         <button [disabled]="!opponentId" (click)="onInvite()" mat-raised-button >Invite </button>
     </div>
     <div class="invitation confirmation" *ngIf="invitation && !isInvitationRequested">
-        <span>{{invitation.opponentEmail}} invited you to the game</span>
+        <span>{{invitation.user1Email}} invited you to the game</span>
         <button mat-stroked-button (click)="onConfirmInvitation()">Start game</button>
     </div>
 </div>
