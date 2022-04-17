@@ -46,7 +46,6 @@ export class GameComponent implements OnInit {
         this.field = [];
         temp[index].mark = this.currentUserMark === Mark.X ? Mark.O : Mark.X;
         this.field = [...temp]
-        console.log(this.field);
         this.outcome = data.outcome
         this._cdr.detectChanges();
       })
