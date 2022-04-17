@@ -95,4 +95,8 @@ export class UserService {
   logout() {
     this.currentUserToken = undefined;
   }
+
+  findOpponent(part: string) {
+    return this.http.get<UserModel[]>(`${this.baseUrl}/search?part=${part}`)
+  }
 }

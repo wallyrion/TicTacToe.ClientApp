@@ -1,0 +1,27 @@
+<div class="search-opponent-component">
+    <mat-form-field>
+        <input matInput placeholder="Search" aria-label="State"
+            [matAutocomplete]="auto"
+            [formControl]="searchOpponentCtrl">
+            <mat-hint ><span *ngIf="this.searchOpponentCtrl.hasError('noResults')" 
+                class="mat-error">No results found</span></mat-hint>
+
+        <mat-autocomplete (optionSelected)="onSelected()" 
+            [displayWith]="displayFn.bind(this)"
+            #auto="matAutocomplete" >
+          <mat-option disabled *ngIf="isLoading" class="is-loading">Loading...
+            <mat-progress-spinner
+                diameter="20"
+                class="spinner"
+                color="primary"
+                mode="indeterminate">
+        </mat-progress-spinner>
+          </mat-option>
+          <ng-container *ngIf="!isLoading">
+            <mat-option *ngFor="let user of filteredUsers" [value]="user.id">
+              <span><b>{{user.email}}</b>  {{user.name && '|' + user.name}}</span>
+            </mat-option>
+          </ng-container>
+        </mat-autocomplete>
+      </mat-form-field>
+</div>

@@ -1,17 +1,11 @@
-<p>game works!</p>
-
 <div *ngIf="!isGameStarted">
     <div class="invitation" *ngIf="isInvitationRequested && invitation">
         Waiting your opponent to respond
     </div>
     <div class="invitation request" *ngIf="!invitation">
         Start new game
-        <mat-form-field class="field" >
-            <mat-label>Enter your opponent's email</mat-label>
-            <!-- <mat-error>Field is requred</mat-error> -->
-            <input  [(ngModel)]="opponentEmail" placeholder="Email" required matInput>
-        </mat-form-field>
-        <button (click)="onInvite()" mat-raised-button >Invite </button>
+        <app-search-opponent (selected)="onSelected($event)"></app-search-opponent>
+        <button [disabled]="!selectedUserId" (click)="onInvite()" mat-raised-button >Invite </button>
     </div>
     <div class="invitation confirmation" *ngIf="invitation && !isInvitationRequested">
         <span>{{invitation.user1Email}} invited you to the game</span>

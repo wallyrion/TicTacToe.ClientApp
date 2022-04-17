@@ -26,6 +26,9 @@ import { ConnectionService } from './services/connection.service';
 import { CommonModule } from '@angular/common';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { NotFoundComponent } from './components/core/not-found/not-found.component';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SearchOpponentComponent } from './components/search-opponent/search-opponent.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,8 @@ import { NotFoundComponent } from './components/core/not-found/not-found.compone
     GameComponent,
     HeaderComponent,
     LoginRegisterComponent,
-    NotFoundComponent
+    NotFoundComponent,
+    SearchOpponentComponent
   ],
   imports: [
     MatCardModule,
@@ -57,6 +61,8 @@ import { NotFoundComponent } from './components/core/not-found/not-found.compone
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule,
 
     
     BrowserModule,

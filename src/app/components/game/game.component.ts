@@ -15,6 +15,7 @@ import { filter } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit {
+  public selectedUserId: string | undefined;
   public opponentEmail: string | undefined;
   public isGameStarted = false;
   public invitation: GameInvitation | undefined;
@@ -60,7 +61,7 @@ export class GameComponent implements OnInit {
         this.startGame(this.invitation);
         this._cdr.detectChanges();
       })
-    
+
   }
 
   public onCheckMark(item: GameObject, index: number) {
@@ -127,7 +128,7 @@ export class GameComponent implements OnInit {
     return list;
   }
 
-  public getOutcomeFromEnum(outcome: Outcome) : 'draw' | 'win' | 'lose' {
+  public getOutcomeFromEnum(outcome: Outcome): 'draw' | 'win' | 'lose' {
     if (outcome.type === GameOutcome.Draw) {
       return 'draw'
     }
@@ -137,6 +138,11 @@ export class GameComponent implements OnInit {
       return 'win'
     }
     return 'lose'
+  }
+
+  public onSelected(userId: string) {
+    this.selectedUserId = userId;
+    this._cdr.markForCheck();
   }
 
 
