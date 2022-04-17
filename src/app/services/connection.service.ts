@@ -36,7 +36,7 @@ export class ConnectionService {
     });
 
     this._hubConnection.on('invite', (data: GameInvitation) => {
-      if (data.user2Email !== this._userService.currentUser.email) {
+      if (data.opponentId !== this._userService.currentUser.id) {
         return;
       }
       

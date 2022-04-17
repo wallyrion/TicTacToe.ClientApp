@@ -15,8 +15,7 @@ import { filter } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit {
-  public selectedUserId: string | undefined;
-  public opponentEmail: string | undefined;
+  public opponentId: string | undefined;
   public isGameStarted = false;
   public invitation: GameInvitation | undefined;
   public mark = Mark;
@@ -91,12 +90,11 @@ export class GameComponent implements OnInit {
   }
 
   public onInvite() {
-    console.log(this.opponentEmail)
-    if (!this.opponentEmail) {
-      return;
+    if (!this.opponentId) {
+      throw new Error('Can not invite to game. OpponentId can not be null')
     }
 
-    this._gameService.inviteToGame(this._userService.currentUser.email, this.opponentEmail)
+    this._gameService.inviteToGame(this.opponentId)
       .subscribe(res => {
         console.log(res);
         this.isInvitationRequested = true;
@@ -140,8 +138,8 @@ export class GameComponent implements OnInit {
     return 'lose'
   }
 
-  public onSelected(userId: string) {
-    this.selectedUserId = userId;
+  public onSelected(userId: string | undefined) {
+    this.opponentId = userId;
     this._cdr.markForCheck();
   }
 

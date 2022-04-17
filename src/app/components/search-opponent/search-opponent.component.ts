@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { debounceTime, filter, finalize, map, switchMap, tap } from 'rxjs';
 import { UserModel } from 'src/app/models/user/user';
@@ -7,10 +7,11 @@ import { UserService } from 'src/app/services/user.service';
 @Component({
   selector: 'app-search-opponent',
   templateUrl: './search-opponent.component.html',
-  styleUrls: ['./search-opponent.component.scss']
+  styleUrls: ['./search-opponent.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchOpponentComponent implements OnInit {
-  @Output() selected = new EventEmitter<string>()
+  @Output() selected = new EventEmitter<string | undefined>()
   selectedUserId: string | undefined;
   searchOpponentCtrl = new FormControl();
   filteredUsers: UserModel[] = [];
@@ -34,13 +35,17 @@ export class SearchOpponentComponent implements OnInit {
 
     this.searchOpponentCtrl.valueChanges
       .pipe(
+        tap(() => {
+          this.selected.next(undefined);
+          this.searchOpponentCtrl.setErrors(null);
+          this.cdr.markForCheck();
+        }),
         debounceTime(500),
-        map(x => x?.toString() as any as string),
+        map(x => x?.toString().trim() as any as string),
         filter(value => !!value && value.length > 1),
         filter(value => value !== this.selectedUserId),
         tap(() => {
           this.filteredUsers = [];
-          this.searchOpponentCtrl.setErrors(null);
           this.isLoading = true;
           this.cdr.markForCheck();
         }),
@@ -50,11 +55,10 @@ export class SearchOpponentComponent implements OnInit {
               if (!val?.length) {
                 this.searchOpponentCtrl.setErrors({noResults: true});
               }
+              this.isLoading = false
+              this.cdr.markForCheck();
             }),
-            finalize(() => {
-            this.isLoading = false
-            this.cdr.markForCheck();
-          }))),
+            )),
       )
       .subscribe(data => {
         this.filteredUsers = data;

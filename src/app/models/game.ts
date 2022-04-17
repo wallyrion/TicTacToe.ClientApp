@@ -1,8 +1,7 @@
 export interface GameInvitation {
   gameId: string;
-  user1Email: string;
-  user1Id: string;
-  user2Email: string;
+  opponentEmail: string;
+  opponentId: string;
   user2Id: string;
   firstTurnPlayerId: string;
 }

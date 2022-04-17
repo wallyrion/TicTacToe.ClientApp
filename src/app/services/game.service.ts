@@ -14,10 +14,8 @@ export class GameService {
     private http: HttpClient,
   ) { }
 
-  inviteToGame(currentUserEmail: string, secondUserEmail: string) {
-    return this.http.post<GameInvitation>(`${this.baseUrl}/invite`, {
-      currentUserEmail, secondUserEmail
-    })
+  inviteToGame(opponentId: string) {
+    return this.http.post<GameInvitation>(`${this.baseUrl}/invite`, { opponentId })
   }
 
   acceptInvitation(gameId: string) {

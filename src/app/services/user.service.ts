@@ -71,7 +71,7 @@ export class UserService {
   }
 
 
-  getCurrentUser() {
+  private getCurrentUser() {
     this.isUserLoading = true;
     return this.http.get<UserModel>(`${this.baseUrl}/my-info`)
     .pipe(tap({
@@ -97,6 +97,7 @@ export class UserService {
   }
 
   findOpponent(part: string) {
-    return this.http.get<UserModel[]>(`${this.baseUrl}/search?part=${part}`)
+    const encodedPart = encodeURIComponent(part);
+    return this.http.get<UserModel[]>(`${this.baseUrl}/search?part=${encodedPart}`)
   }
 }

@@ -5,10 +5,10 @@
     <div class="invitation request" *ngIf="!invitation">
         Start new game
         <app-search-opponent (selected)="onSelected($event)"></app-search-opponent>
-        <button [disabled]="!selectedUserId" (click)="onInvite()" mat-raised-button >Invite </button>
+        <button [disabled]="!opponentId" (click)="onInvite()" mat-raised-button >Invite </button>
     </div>
     <div class="invitation confirmation" *ngIf="invitation && !isInvitationRequested">
-        <span>{{invitation.user1Email}} invited you to the game</span>
+        <span>{{invitation.opponentEmail}} invited you to the game</span>
         <button mat-stroked-button (click)="onConfirmInvitation()">Start game</button>
     </div>
 </div>
