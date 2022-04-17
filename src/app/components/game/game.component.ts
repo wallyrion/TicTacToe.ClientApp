@@ -36,6 +36,9 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     this._connectionService.initializeHub();
     this._connectionService.send$
+      .pipe(
+        filter(x => x.gameId === this.invitation?.gameId)
+      )
       .subscribe(data => {
         this.isCurrentUserTurn = !this.isCurrentUserTurn;
         const index = +data.index;
@@ -78,7 +81,11 @@ export class GameComponent implements OnInit {
       this.outcome = { type: GameOutcome.Draw }
     }
 
-    this._connectionService.sendGameEvent(index, this.outcome);
+    if (!this.invitation) {
+      throw new Error ('Invitation cannot be null');
+    }
+
+    this._connectionService.sendGameEvent(index, this.outcome, this.invitation.gameId);
     this._cdr.detectChanges();
   }
 

@@ -48,7 +48,7 @@ export class ConnectionService {
     });
   }
 
-  public sendGameEvent(index: number, outcome: Outcome | undefined) {
+  public sendGameEvent(index: number, outcome: Outcome | undefined, gameId: string) {
     if (!this._hubConnection) {
       console.error('_hubConnection is undefined')
       return;
@@ -57,7 +57,9 @@ export class ConnectionService {
     let ev = {
       index: index.toString(),
       sessionId: this.sessionId.toString(),
-      outcome: outcome
+      outcome: outcome,
+      gameId
+
     } as GameEvent
     
     this._hubConnection.invoke('Send', JSON.stringify(ev))

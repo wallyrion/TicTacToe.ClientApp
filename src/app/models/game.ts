@@ -11,6 +11,7 @@ export interface GameEvent {
   index: string;
   sessionId: string;
   outcome: Outcome
+  gameId: string;
 }
 
 export interface GameObject {
