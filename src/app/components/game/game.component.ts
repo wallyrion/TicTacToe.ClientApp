@@ -69,6 +69,8 @@ export class GameComponent implements OnInit {
       throw new Error ('Invitation cannot be null');
     }
 
+    this.isCurrentUserTurn = !this.isCurrentUserTurn;
+    this._cdr.markForCheck()
     this._gameService.handleNextTurn(this.invitation.gameId, index)
       .subscribe(gameEvent => this.handleNextTurnResult(gameEvent))
   }
@@ -148,8 +150,6 @@ export class GameComponent implements OnInit {
         }
       }
     }
-    this.isCurrentUserTurn = !this.isCurrentUserTurn;
-
     this._cdr.detectChanges();
   }
 
