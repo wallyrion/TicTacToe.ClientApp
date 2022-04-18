@@ -20,10 +20,10 @@ export class GameComponent implements OnInit {
   public invitation: GameInvitation | undefined;
   public mark = Mark;
   public outcomes = GameOutcome;
-  public field: GameObject[] = []!
+  public field: GameObject[] = []
   public isInvitationRequested = false;
   public isCurrentUserTurn: boolean = null!;
-  public currentUserMark: Mark = null!;
+  public currentUserMark: Mark | undefined;
   public outcome: Outcome | undefined;
   constructor(
     private _cdr: ChangeDetectorRef,
@@ -34,6 +34,17 @@ export class GameComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this._gameService.newGame$.subscribe(() => {
+      this.initializeHub();
+      this.initializeDefaultValues();
+      this._cdr.detectChanges();
+    })
+   
+    this.initializeHub();
+    this.initializeDefaultValues();
+  }
+
+  private initializeHub() {
     this._connectionService.initializeHub();
     this._connectionService.opponentTurn$
       .pipe(
@@ -58,7 +69,17 @@ export class GameComponent implements OnInit {
         this.startGame(this.invitation);
         this._cdr.detectChanges();
       })
+  } 
 
+  private initializeDefaultValues() {
+    this.opponentId = undefined;
+    this.isGameStarted = false;
+    this.invitation = undefined;
+    this.field = [];
+    this.isInvitationRequested = false;
+    this.isCurrentUserTurn = false;
+    this.currentUserMark = undefined;
+    this.outcome = undefined;
   }
 
   public onCheckMark(item: GameObject, index: number) {
@@ -81,7 +102,7 @@ export class GameComponent implements OnInit {
     this.field = createField();
     this.isCurrentUserTurn = inv?.firstTurnPlayerId === this._userService.currentUser.id
     this.currentUserMark = this.isCurrentUserTurn ? Mark.X : Mark.O
-    this._cdr.markForCheck();
+    this._cdr.detectChanges();
   }
 
   public onInvite() {
@@ -133,9 +154,9 @@ export class GameComponent implements OnInit {
         return {mark: Mark.NA} as GameObject
       }
       if (x.userId === this._userService.currentUser.id) {
-        return {mark: this.currentUserMark}
+        return {mark: this.currentUserMark} as GameObject
       }
-      else return {mark: this.currentUserMark === Mark.X ? Mark.O : Mark.X }
+      else return {mark: this.currentUserMark === Mark.X ? Mark.O : Mark.X } as GameObject
     })
 
     if (event.outcome){

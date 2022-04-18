@@ -5,7 +5,7 @@
     </div>
     <div class="header__content content" *ngIf="user">
         <div>
-            <a routerLink="/game">Start new game</a>
+            <a routerLink="/game" (click)="onStartNewGame()">Start new game</a>
         </div>
         <div class="right">
             <div>

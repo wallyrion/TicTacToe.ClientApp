@@ -10,7 +10,7 @@ import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ConnectionService {
-  private sessionId = Guid.create().toString();
+  private sessionId: string = null!;
   private _hubConnection: HubConnection | undefined;
   public send$ = new Subject<GameEvent>()
   public invite$ = new Subject<GameInvitation>()
@@ -22,6 +22,7 @@ export class ConnectionService {
   ) { }
 
   initializeHub(): void {
+    this.sessionId = Guid.create().toString();
     this._hubConnection = new signalR.HubConnectionBuilder()
       .configureLogging(signalR.LogLevel.Information)
       .withAutomaticReconnect()
