@@ -41,7 +41,8 @@ export class GameComponent implements OnInit {
       )
       .subscribe(data => {
         this.handleNextTurnResult(data);
-         
+        this.isCurrentUserTurn = !this.isCurrentUserTurn;
+
         this._cdr.markForCheck();
       })
 
