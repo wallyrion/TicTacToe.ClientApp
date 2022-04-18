@@ -37,3 +37,21 @@ export interface Outcome {
   indexes?: number[],
   winnerId?: string;
 }
+
+export interface GameEventDto {
+  gameId: string;
+  turnUserId: string;
+  createdDate: string;
+  outcome: OutcomeDto | undefined;
+  cellEvents: CellEventDto[];
+}
+
+export interface OutcomeDto {
+  cellWinIndexes: number[] | undefined;
+  isDraw: boolean;
+}
+
+export interface CellEventDto {
+  userId: string;
+  turnDate: string;
+}

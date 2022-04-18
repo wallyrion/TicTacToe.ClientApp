@@ -3,7 +3,7 @@ import { HubConnection } from '@microsoft/signalr';
 import * as signalR from '@microsoft/signalr';
 import { BASE_URL } from 'src/constants';
 import { Subject } from 'rxjs';
-import { GameEvent, GameInvitation, Outcome } from '../models/game';
+import { GameEvent, GameEventDto, GameInvitation, Outcome } from '../models/game';
 import { Guid } from 'guid-typescript';
 import { UserService } from './user.service';
 import { ToastrService } from 'ngx-toastr';
@@ -15,6 +15,7 @@ export class ConnectionService {
   public send$ = new Subject<GameEvent>()
   public invite$ = new Subject<GameInvitation>()
   public accept$ = new Subject<string>()
+  public opponentTurn$ = new Subject<GameEventDto>()
   constructor(
     private readonly _userService: UserService,
     private readonly _toastr: ToastrService,
@@ -42,7 +43,6 @@ export class ConnectionService {
 
     this._hubConnection.onreconnected(() => {
       console.log('on onreconnected', this._hubConnection?.connectionId);
-     // console.log('on onreconnected', this._hubConnection?.stream(``))
     })
 
     this._hubConnection.keepAliveIntervalInMilliseconds = 1000
@@ -72,6 +72,10 @@ export class ConnectionService {
 
     this._hubConnection.on('accepted', (gameId: string) => {
       this.accept$.next(gameId);
+    });
+
+    this._hubConnection.on('opponentTurn', (data: GameEventDto) => {
+      this.opponentTurn$.next(data);
     });
   }
 

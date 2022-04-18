@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BASE_URL } from 'src/constants';
-import { GameInvitation } from '../models/game';
+import { GameEventDto, GameInvitation } from '../models/game';
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +20,12 @@ export class GameService {
 
   acceptInvitation(gameId: string) {
     return this.http.post(`${this.baseUrl}/accept/${gameId}`, {})
+  }
+
+  handleNextTurn(gameId: string, cellIndex: number) {
+    return this.http.post<GameEventDto>(`${this.baseUrl}/next-turn`, {
+      gameId,
+      cellIndex
+    })
   }
 }

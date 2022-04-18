@@ -1,9 +1,9 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { GameService } from 'src/app/services/game.service';
 import { UserService } from 'src/app/services/user.service';
-import { GameInvitation, GameObject, GameOutcome, Mark, Outcome } from 'src/app/models/game';
+import { GameEventDto, GameInvitation, GameObject, GameOutcome, Mark, Outcome } from 'src/app/models/game';
 import { ToastrService } from 'ngx-toastr';
-import { calculateWin } from 'src/app/helpers/game-logic';
+import { createField } from 'src/app/helpers/game-logic';
 import { ConnectionService } from 'src/app/services/connection.service';
 import { filter } from 'rxjs';
 
@@ -35,19 +35,14 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this._connectionService.initializeHub();
-    this._connectionService.send$
+    this._connectionService.opponentTurn$
       .pipe(
         filter(x => x.gameId === this.invitation?.gameId)
       )
       .subscribe(data => {
-        this.isCurrentUserTurn = !this.isCurrentUserTurn;
-        const index = +data.index;
-        let temp = [...this.field];
-        this.field = [];
-        temp[index].mark = this.currentUserMark === Mark.X ? Mark.O : Mark.X;
-        this.field = [...temp]
-        this.outcome = data.outcome
-        this._cdr.detectChanges();
+        this.handleNextTurnResult(data);
+         
+        this._cdr.markForCheck();
       })
 
     this._connectionService.invite$.subscribe(data => {
@@ -70,29 +65,20 @@ export class GameComponent implements OnInit {
       return;
     }
 
-    this.isCurrentUserTurn = !this.isCurrentUserTurn;
-    this.field[index].mark = this.currentUserMark;
-    this.field = [...this.field]
-    const res = calculateWin(this.field, this.currentUserMark)
-    if (res) {
-      this.outcome = { type: GameOutcome.Win, indexes: res, winnerId: this._userService.currentUser.id }
-    } else if (!res && this.field.every(x => x.mark !== Mark.NA)) {
-      this.outcome = { type: GameOutcome.Draw }
-    }
-
     if (!this.invitation) {
       throw new Error ('Invitation cannot be null');
     }
 
-    this._connectionService.sendGameEvent(index, this.outcome, this.invitation.gameId);
-    this._cdr.detectChanges();
+    this._gameService.handleNextTurn(this.invitation.gameId, index)
+      .subscribe(gameEvent => this.handleNextTurnResult(gameEvent))
   }
 
   public startGame(inv?: GameInvitation) {
     this.isGameStarted = true;
-    this.field = this.fillArrayWithCells();
+    this.field = createField();
     this.isCurrentUserTurn = inv?.firstTurnPlayerId === this._userService.currentUser.id
     this.currentUserMark = this.isCurrentUserTurn ? Mark.X : Mark.O
+    this._cdr.markForCheck();
   }
 
   public onInvite() {
@@ -121,17 +107,6 @@ export class GameComponent implements OnInit {
       });
   }
 
-  private fillArrayWithCells() {
-    var list = [];
-    for (var i = 0; i < 9; i++) {
-      var obj = {
-        mark: Mark.NA
-      }
-      list.push(obj);
-    }
-    return list;
-  }
-
   public getOutcomeFromEnum(outcome: Outcome): 'draw' | 'win' | 'lose' {
     if (outcome.type === GameOutcome.Draw) {
       return 'draw'
@@ -149,5 +124,33 @@ export class GameComponent implements OnInit {
     this._cdr.markForCheck();
   }
 
+  private handleNextTurnResult(event: GameEventDto) {
+    this.field = event.cellEvents.map(x => {
+      if (!x.userId) {
+        return {mark: Mark.NA} as GameObject
+      }
+      if (x.userId === this._userService.currentUser.id) {
+        return {mark: this.currentUserMark}
+      }
+      else return {mark: this.currentUserMark === Mark.X ? Mark.O : Mark.X }
+    })
+
+    if (event.outcome){
+      if (event.outcome.cellWinIndexes) {
+        this.outcome = {
+          winnerId: event.turnUserId,
+          type: event.turnUserId === this._userService.currentUser.id ? GameOutcome.Win : GameOutcome.Lose ,
+          indexes: event.outcome.cellWinIndexes
+         }
+      } else if (event.outcome.isDraw) {
+        this.outcome = {
+          type: GameOutcome.Draw
+        }
+      }
+    }
+    this.isCurrentUserTurn = !this.isCurrentUserTurn;
+
+    this._cdr.detectChanges();
+  }
 
 }
